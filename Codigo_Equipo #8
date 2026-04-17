@@ -1,0 +1,50 @@
+#include "Arduino.h"
+#include "WiFi.h"
+#include "Audio.h"
+
+
+// --- CREDENCIALES  DE INTERNET (en este caso datos moviles)---
+const char* ssid = "M35Oziel";
+const char* password = "OzielP2026";
+
+
+// --- PINES ---
+#define I2S_DOUT      25
+#define I2S_BCLK      27
+#define I2S_LRC       26
+
+
+Audio audio; 
+
+
+void setup() {
+    Serial.begin(115200);
+    
+    // Conexión WiFi
+    WiFi.begin(ssid, password);
+    Serial.print("Conectando a la Red");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("\n¡WiFi Conectado!"); // Aviso de Conexión de Wifi
+
+
+    // Configuración de Pines del Audio
+    audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+    audio.setVolume(21);// Max Volumen
+    // Estación de Radio
+    audio.connecttohost("http://monterrey.radio.wnsol.com:8260/;stream.mp3");
+}
+
+
+void loop() {
+    audio.loop();
+}
+
+
+//Verificar el funcionamiento
+void audio_info(const char *info){
+    Serial.print("INFO: "); Serial.println(info);
+}
+
